@@ -1,6 +1,7 @@
 <template>
   <nav-bar cart-count="5"></nav-bar>
-  <section class="py-5">
+  <loading-container v-if="isLoading" />
+  <section v-else class="py-5">
     <div class="container px-4 px-lg-5 my-5">
       <div
         class="back-container mb-3"
@@ -15,32 +16,30 @@
         <div class="col-md-6">
           <img
             class="card-img-top mb-5 mb-md-0"
-            src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg"
+            :src="product.image"
             alt="..."
           />
         </div>
         <div class="col-md-6">
-          <div class="small mb-1 text-muted">men's clothing</div>
+          <div class="small mb-1 text-muted">{{ product.category }}</div>
           <!-- <h1 class="display-5 fw-bolder">Product {{ this.$route.params.id }}</h1> -->
           <h1 class="display-5 fw-bolder mb-3">
-            Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops
+            {{ product.title }}
             <favorite-button :active="isFavorite" @change="toggleFavorite" />
           </h1>
 
+          <!-- TODO: Create nice stars -->
           <div class="mb-2 d-flex">
+            <h5 class="me-2">{{ product.rating.rate }}</h5>
             <div class="ratings me-3">
-              <i class="fa fa-star rating-color"></i>
-              <i class="fa fa-star rating-color"></i>
-              <i class="fa fa-star rating-color"></i>
-              <i class="fa fa-star rating-color"></i>
-              <i class="fa fa-star"></i>
+              <i v-for="n in 5" :key="n" :class="getStarClasses(n)"></i>
             </div>
-            <p class="text-muted">12 reviews</p>
+            <p class="text-muted">{{ product.rating.count }} reviews</p>
           </div>
 
           <div class="fs-5 mb-3">
             <!-- <span class="text-decoration-line-through">$300</span> -->
-            <span>$109.95</span>
+            <span>${{ product.price }}</span>
           </div>
 
           <p class="lead mb-3">
@@ -69,30 +68,56 @@
   </section>
 </template>
 
-<script>
-import NavBar from "@/components/NavBar";
-import FavoriteButton from "@/components/FavoriteButton";
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+import LoadingContainer from "@/components/LoadingContainer.vue";
+import NavBar from "@/components/NavBar.vue";
+import FavoriteButton from "@/components/FavoriteButton.vue";
+import {Product} from "@/types/Product";
+import axios from "axios";
+
+export default defineComponent({
   name: "ProductPage",
   data() {
     return {
       isFavorite: false,
+      isLoading: true,
+      product: null as Product|null
     };
   },
-  created() {
-    // check id here
-    console.log("Created");
-  },
   components: {
+    LoadingContainer,
     NavBar,
     FavoriteButton,
   },
   methods: {
-    toggleFavorite() {
+    toggleFavorite() : void {
       this.isFavorite = !this.isFavorite;
     },
+    getStarClasses(num: number) : string {
+      if (this.product == null) {
+        throw "The product is null!";
+      }
+      if (num <= this.product.rating.rate) {
+        return "fa fa-star";
+      } else if (num - 0.5 <= this.product.rating.rate) {
+        return "fa fa-star-half-o";
+      } else {
+        return "fa fa-star-o";
+      }
+    },
   },
-};
+  created() : void {
+    const id = this.$route.params.id;
+    console.log(id);
+    axios
+      .get<Product>(`https://fakestoreapi.com/products/${id}`)
+      .then(async (response) => {
+        this.product = response.data;
+        this.isLoading = false;
+      });
+  },
+});
 </script>
 
 <style scoped>
@@ -102,10 +127,7 @@ export default {
   font-size: 32px;
 }
 .ratings i {
-  color: #6c757d;
   font-size: 24px;
-}
-.rating-color {
   color: #fbc634 !important;
 }
 .back-container {

@@ -1,4 +1,6 @@
-interface Product {
+import { Rating } from "@/types/Rating";
+
+export interface Product {
   id: number;
   title: string;
   price: number;

@@ -1,4 +1,6 @@
-class CartItem {
+import { Product } from "@/types/Product";
+
+export class CartItem {
   product: Product;
   count: number;
 
