@@ -78,17 +78,17 @@ import axios from "axios";
 
 export default defineComponent({
   name: "ProductPage",
-  data() {
-    return {
-      isFavorite: false,
-      isLoading: true,
-      product: null as Product|null
-    };
-  },
   components: {
     LoadingContainer,
     NavBar,
     FavoriteButton,
+  },
+  data() {
+    return {
+      isFavorite: false,
+      isLoading: true,
+      product: null as Product | null
+    };
   },
   methods: {
     toggleFavorite() : void {
@@ -109,7 +109,6 @@ export default defineComponent({
   },
   created() : void {
     const id = this.$route.params.id;
-    console.log(id);
     axios
       .get<Product>(`https://fakestoreapi.com/products/${id}`)
       .then(async (response) => {
@@ -134,6 +133,9 @@ export default defineComponent({
   display: flex;
   align-items: center;
   cursor: pointer;
+}
+.back-container:hover {
+  color: var(--bs-blue);
 }
 .back-container > p {
   margin: 0;
