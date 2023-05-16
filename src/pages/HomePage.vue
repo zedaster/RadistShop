@@ -1,5 +1,4 @@
 <template>
-  <nav-bar cart-count="5"></nav-bar>
   <loading-container v-if="isLoading" />
   <section v-else>
     <div class="container px-4 px-lg-5 mt-5">
@@ -8,7 +7,7 @@
       >
         <product-card v-for="product in products"
                       :key="product.id"
-          :product="product"
+          :product="product" :cart="cart"
         />
       </div>
     </div>
@@ -16,10 +15,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 import ProductCard from "@/components/ProductCard.vue";
-import NavBar from "@/components/NavBar.vue";
 import {Product} from "@/types/Product";
+import {Cart} from "@/types/Cart";
 import axios from "axios";
 import LoadingContainer from "@/components/LoadingContainer.vue";
 
@@ -29,7 +28,12 @@ export default defineComponent({
     //HelloWorld,
     LoadingContainer,
     ProductCard,
-    NavBar,
+  },
+  props: {
+    cart: {
+      type: Object as PropType<Cart>,
+      required: true,
+    }
   },
   data() {
     return {

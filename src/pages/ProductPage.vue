@@ -1,5 +1,4 @@
 <template>
-  <nav-bar cart-count="5"></nav-bar>
   <loading-container v-if="isLoading" />
   <section v-else class="py-5">
     <div class="container px-4 px-lg-5 my-5">
@@ -47,20 +46,7 @@
             your laptop (up to 15 inches) in the padded sleeve, your everyday
           </p>
           <div class="d-flex mb-3">
-            <input
-              class="form-control text-center me-3"
-              id="inputQuantity"
-              type="num"
-              value="1"
-              style="max-width: 3rem"
-            />
-            <button
-              class="btn btn-outline-dark flex-shrink-0 me-3"
-              type="button"
-            >
-              <i class="bi-cart-fill me-1"></i>
-              Add to cart
-            </button>
+            <add-to-cart-button :product="product" :cart="cart" />
           </div>
         </div>
       </div>
@@ -69,19 +55,26 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from "vue";
 import LoadingContainer from "@/components/LoadingContainer.vue";
-import NavBar from "@/components/NavBar.vue";
 import FavoriteButton from "@/components/FavoriteButton.vue";
 import {Product} from "@/types/Product";
 import axios from "axios";
+import AddToCartButton from "@/components/AddToCartButton.vue";
+import { Cart } from "@/types/Cart";
 
 export default defineComponent({
   name: "ProductPage",
   components: {
     LoadingContainer,
-    NavBar,
     FavoriteButton,
+    AddToCartButton,
+  },
+  props: {
+    cart: {
+      type: Object as PropType<Cart>,
+      required: true,
+    }
   },
   data() {
     return {

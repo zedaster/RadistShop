@@ -12,15 +12,15 @@
           <!-- Product price-->
           ${{ product.price }}
         </div>
+
       </div>
 
       <!-- Product actions-->
       <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
         <div class="d-flex justify-content-center">
 
-          <a class="btn btn-outline-dark mx-1" href="#"
-          >В корзину</a>
-          <favorite-button :product="product" class="mx-1"></favorite-button>
+          <add-to-cart-button :cart="cart" :product="product" />
+          <favorite-button :product="product" class="mx-1" />
         </div>
       </div>
     </div>
@@ -29,20 +29,27 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import {Cart} from "@/types/Cart";
 import {Product} from "@/types/Product";
 import FavoriteButton from "@/components/FavoriteButton.vue";
+import AddToCartButton from "@/components/AddToCartButton.vue";
 import type { PropType } from 'vue'
 
 export default defineComponent({
   name: "product-card",
   components: {
     FavoriteButton,
+    AddToCartButton,
   },
   props: {
     product: {
       type: Object as PropType<Product>,
       required: true,
-    }
+    },
+    cart: {
+      type: Object as PropType<Cart>,
+      required: true,
+    },
   },
   methods: {
     openProduct: function ($event: Event){

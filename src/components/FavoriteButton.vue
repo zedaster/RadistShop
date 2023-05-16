@@ -14,8 +14,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import {Product} from "@/types/Product";
+import {Cart} from "@/types/Cart";
 import {FavoriteRepository} from "@/resources/favorite/FavoriteRepository";
-import axios from "axios/index";
 
 export default defineComponent({
   name: "favorite-button",
