@@ -25,7 +25,7 @@
           <!-- <h1 class="display-5 fw-bolder">Product {{ this.$route.params.id }}</h1> -->
           <h1 class="display-5 fw-bolder mb-3">
             {{ product.title }}
-            <favorite-button :active="isFavorite" @change="toggleFavorite" />
+            <favorite-button :product="product" />
           </h1>
 
           <!-- TODO: Create nice stars -->

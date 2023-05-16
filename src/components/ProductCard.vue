@@ -16,9 +16,11 @@
 
       <!-- Product actions-->
       <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-        <div class="text-center">
-          <a class="btn btn-outline-dark mt-auto" href="#"
-          >Подробнее</a>
+        <div class="d-flex justify-content-center">
+
+          <a class="btn btn-outline-dark mx-1" href="#"
+          >В корзину</a>
+          <favorite-button :product="product" class="mx-1"></favorite-button>
         </div>
       </div>
     </div>
@@ -28,14 +30,22 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import {Product} from "@/types/Product";
+import FavoriteButton from "@/components/FavoriteButton.vue";
+import type { PropType } from 'vue'
 
 export default defineComponent({
   name: "product-card",
+  components: {
+    FavoriteButton,
+  },
   props: {
-    product: Product,
+    product: {
+      type: Object as PropType<Product>,
+      required: true,
+    }
   },
   methods: {
-    openProduct: function ($event){
+    openProduct: function ($event: Event){
       this.$router.push({ name: 'product', params: {id: this.product.id}});
     }
   }
@@ -43,6 +53,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
+@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css";
 .card-body:hover {
   cursor: pointer;
   color: var(--bs-blue);
