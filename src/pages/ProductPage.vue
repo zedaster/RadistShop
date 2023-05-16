@@ -128,7 +128,7 @@ export default defineComponent({
   cursor: pointer;
 }
 .back-container:hover {
-  color: var(--bs-blue);
+  color: var(--bs-gray);
 }
 .back-container > p {
   margin: 0;

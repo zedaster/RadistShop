@@ -1,7 +1,20 @@
 import { Product } from "@/types/Product";
+import { CartRepository } from "@/resources/cart/CartRepository";
+import { CartLocalStorage } from "@/resources/cart/CartLocalStorage";
 
 export class Cart {
+  private static repository: CartRepository = new CartLocalStorage();
+
+  public static async loadFromRepository() : Promise<Cart> {
+    const itemMap = await Cart.repository.getProductCounts();
+    return new Cart(itemMap);
+  }
+
   private items = new Map<number, number>();
+
+  private constructor(itemMap: Map<number, number>) {
+    this.items = itemMap;
+  }
 
   get count(): number {
     let count = 0;
@@ -16,29 +29,22 @@ export class Cart {
       this.items.delete(product.id);
     }
     this.items.set(product.id, count);
+    Cart.repository.setProductCount(product, count);
   }
 
   incrementProductCount(product: Product) : void {
     if (!this.hasProduct(product)) {
-      console.log('no product')
-      this.items.set(product.id, 1);
+      this.setProductCount(product, 1);
     } else {
-      console.log('there is product')
-      this.items.set(product.id, this.items.get(product.id)! + 1)
+      this.setProductCount(product, this.items.get(product.id)! + 1)
     }
-    console.log('increment Current total count: ' + this.count);
   }
 
   decrementProductCount(product: Product) : void {
     if (this.hasProduct(product)) {
       const currentCount = this.items.get(product.id)!;
-      if (currentCount != 1) {
-        this.items.set(product.id, currentCount - 1)
-      } else {
-        this.items.delete(product.id);
-      }
+      this.setProductCount(product, currentCount - 1);
     }
-    console.log(' decrement Current total count: ' + this.count);
   }
 
   getProductCount(product: Product) : number {

@@ -1,5 +1,5 @@
 <template>
-  <a v-if="!isActive" class="btn btn-outline-dark mx-1" href="#" @click="addToCart">В корзину</a>
+  <a v-if="!isActive" class="btn btn-outline-dark mx-1" @click="addToCart">В корзину</a>
   <div v-else class="d-flex">
     <button class="btn btn-outline-dark" @click="minusCount"><i class="fa fa-minus" aria-hidden="true"></i></button>
     <div class="cart-count mx-2">

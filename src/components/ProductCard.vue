@@ -63,7 +63,7 @@ export default defineComponent({
 @import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css";
 .card-body:hover {
   cursor: pointer;
-  color: var(--bs-blue);
+  color: var(--bs-gray);
 }
 
 .img-container {
