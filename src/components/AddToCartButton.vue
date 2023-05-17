@@ -34,7 +34,6 @@ export default defineComponent({
   },
   computed: {
     isActive() : boolean {
-      console.log(this.cart.hasProduct(this.product));
       return this.cart.hasProduct(this.product);
     },
     productCount() : number {
@@ -59,7 +58,6 @@ export default defineComponent({
 .cart-count {
   display: flex;
   align-items: center;
-  height: 100%;
 }
 .cart-count p {
   margin: 0;

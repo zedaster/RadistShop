@@ -1,15 +1,16 @@
 <template>
   <loading-container v-if="isLoading" />
   <div v-else>
-    <nav-bar :cart-count="cart.count"></nav-bar>
-    <router-view :cart="cart" />
+    <nav-bar :cart-count="cart!.count"></nav-bar>
+    <router-view :cart="cart!" />
+    <cart-modal :cart="cart!" />
   </div>
-
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import NavBar from "@/components/NavBar.vue";
+import CartModal from "@/components/CartModal.vue";
 import {Cart} from "@/types/Cart";
 import LoadingContainer from "@/components/LoadingContainer.vue";
 
@@ -18,6 +19,7 @@ export default defineComponent({
   components: {
     NavBar,
     LoadingContainer,
+    CartModal,
   },
   data() {
     return {

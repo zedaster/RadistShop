@@ -17,9 +17,9 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import ProductCard from "@/components/ProductCard.vue";
-import {Product} from "@/types/Product";
-import {Cart} from "@/types/Cart";
-import axios from "axios";
+import { Product } from "@/types/Product";
+import { Products } from "@/types/Products";
+import { Cart } from "@/types/Cart";
 import LoadingContainer from "@/components/LoadingContainer.vue";
 
 export default defineComponent({
@@ -42,13 +42,12 @@ export default defineComponent({
     }
   },
   created() : void {
-    axios
-      .get<Array<Product>>('https://fakestoreapi.com/products/')
-    .then(async (response) => {
-      this.products = response.data;
-      this.isLoading = false;
-    });
-
+    Products
+      .loadAllProducts()
+      .then((products) => {
+        this.products = products;
+        this.isLoading = false;
+      });
   }
 });
 </script>

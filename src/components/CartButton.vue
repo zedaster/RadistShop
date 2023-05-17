@@ -2,7 +2,8 @@
   <button
     class="btn btn-outline-light"
     type="submit"
-    @click="($event) => $emit('openCart')"
+    data-bs-toggle="modal"
+    data-bs-target="#cartModal"
   >
     <i class="bi-cart-fill me-1"></i>
     Корзина

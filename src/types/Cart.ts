@@ -1,19 +1,28 @@
 import { Product } from "@/types/Product";
 import { CartRepository } from "@/resources/cart/CartRepository";
 import { CartLocalStorage } from "@/resources/cart/CartLocalStorage";
+import { Products } from "@/types/Products";
 
 export class Cart {
   private static repository: CartRepository = new CartLocalStorage();
 
-  public static async loadFromRepository() : Promise<Cart> {
+  public static async loadFromRepository(): Promise<Cart> {
     const itemMap = await Cart.repository.getProductCounts();
-    return new Cart(itemMap);
+    const allProducts = await Products.loadMapOfProducts();
+    return new Cart(itemMap, allProducts);
   }
 
-  private items = new Map<number, number>();
+  private readonly items: Map<number, number>;
+  private readonly allProducts: Map<number, Product>;
+  private amount: number;
 
-  private constructor(itemMap: Map<number, number>) {
+  private constructor(itemMap: Map<number, number>, allProducts: Map<number, Product>) {
     this.items = itemMap;
+    this.allProducts = allProducts;
+    this.amount = 0;
+    for (const [product, count] of this.getAllProducts()) {
+      this.amount = Math.round((this.amount + product.price * count) * 100) / 100;
+    }
   }
 
   get count(): number {
@@ -24,35 +33,55 @@ export class Cart {
     return count;
   }
 
-  setProductCount(product: Product, count: number): void {
-    if (count == 0 && this.items.has(product.id)) {
+  get totalAmount(): number {
+    return this.amount;
+  }
+
+  async setProductCount(product: Product, count: number): Promise<void> {
+    const currentCount = this.items.get(product.id) ?? 0;
+    this.amount = Math.round((this.amount + product.price * (count - currentCount)) * 100) / 100;
+    if (count == 0) {
       this.items.delete(product.id);
-    }
-    this.items.set(product.id, count);
-    Cart.repository.setProductCount(product, count);
-  }
-
-  incrementProductCount(product: Product) : void {
-    if (!this.hasProduct(product)) {
-      this.setProductCount(product, 1);
     } else {
-      this.setProductCount(product, this.items.get(product.id)! + 1)
+      this.items.set(product.id, count);
+    }
+
+    await Cart.repository.setProductCount(product, count);
+  }
+
+  async incrementProductCount(product: Product): Promise<void> {
+    if (!this.hasProduct(product)) {
+      await this.setProductCount(product, 1);
+    } else {
+      await this.setProductCount(product, this.items.get(product.id)! + 1);
     }
   }
 
-  decrementProductCount(product: Product) : void {
+  async decrementProductCount(product: Product): Promise<void> {
     if (this.hasProduct(product)) {
       const currentCount = this.items.get(product.id)!;
-      this.setProductCount(product, currentCount - 1);
+      await this.setProductCount(product, currentCount - 1);
     }
   }
 
-  getProductCount(product: Product) : number {
+  getProductCount(product: Product): number {
     if (!this.items.has(product.id)) return 0;
     return this.items.get(product.id)!;
   }
 
   hasProduct(product: Product): boolean {
     return this.items.has(product.id);
+  }
+
+  getAllProducts(): Map<Product, number> {
+    const resultMap = new Map<Product, number>();
+    const allProducts = this.allProducts;
+    console.log(this.items);
+    for (const [id, count] of this.items) {
+      console.log(`id ${id} count ${count}`);
+      resultMap.set(this.allProducts.get(id)!, count);
+    }
+    console.log(resultMap);
+    return resultMap;
   }
 }

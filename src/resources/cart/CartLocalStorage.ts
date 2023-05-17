@@ -13,7 +13,13 @@ export class CartLocalStorage implements CartRepository {
 
   async setProductCount(product: Product, count: number): Promise<void> {
     const productCounts = await this.getProductCounts();
-    productCounts.set(product.id, count);
+    if (count == 0) {
+      if (productCounts.has(product.id)) {
+        productCounts.delete(product.id);
+      }
+    } else {
+      productCounts.set(product.id, count);
+    }
     localStorage.setItem('cart', JSON.stringify(Array.from(productCounts.entries())));
   }
 

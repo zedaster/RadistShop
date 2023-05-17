@@ -55,7 +55,7 @@ export default defineComponent({
     openProduct: function ($event: Event){
       this.$router.push({ name: 'product', params: {id: this.product.id}});
     }
-  }
+  },
 });
 </script>
 

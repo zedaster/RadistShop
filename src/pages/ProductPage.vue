@@ -62,6 +62,7 @@ import {Product} from "@/types/Product";
 import axios from "axios";
 import AddToCartButton from "@/components/AddToCartButton.vue";
 import { Cart } from "@/types/Cart";
+import { Products } from "@/types/Products";
 
 export default defineComponent({
   name: "ProductPage",
@@ -101,11 +102,11 @@ export default defineComponent({
     },
   },
   created() : void {
-    const id = this.$route.params.id;
-    axios
-      .get<Product>(`https://fakestoreapi.com/products/${id}`)
-      .then(async (response) => {
-        this.product = response.data;
+    const id = parseInt(this.$route.params.id.toString());
+    Products
+      .loadProduct(id)
+      .then((product) => {
+        this.product = product;
         this.isLoading = false;
       });
   },
