@@ -15,16 +15,16 @@
         <div class="col-md-6">
           <img
             class="card-img-top mb-5 mb-md-0"
-            :src="product.image"
+            :src="product!.image"
             alt="..."
           />
         </div>
         <div class="col-md-6">
-          <div class="small mb-1 text-muted">{{ product.category }}</div>
+          <div class="small mb-1 text-muted">{{ product!.category }}</div>
           <!-- <h1 class="display-5 fw-bolder">Product {{ this.$route.params.id }}</h1> -->
           <h1 class="display-5 fw-bolder mb-3">
             {{ product.title }}
-            <favorite-button :product="product" />
+            <favorite-button :product="product!" :favorites="favorites" />
           </h1>
 
           <!-- TODO: Create nice stars -->
@@ -46,7 +46,7 @@
             your laptop (up to 15 inches) in the padded sleeve, your everyday
           </p>
           <div class="d-flex mb-3">
-            <add-to-cart-button :product="product" :cart="cart" />
+            <add-to-cart-button :product="product!" :cart="cart" />
           </div>
         </div>
       </div>
@@ -58,11 +58,11 @@
 import { defineComponent, PropType } from "vue";
 import LoadingContainer from "@/components/LoadingContainer.vue";
 import FavoriteButton from "@/components/FavoriteButton.vue";
-import {Product} from "@/types/Product";
-import axios from "axios";
+import { Product } from "@/types/Product";
 import AddToCartButton from "@/components/AddToCartButton.vue";
 import { Cart } from "@/types/Cart";
 import { Products } from "@/types/Products";
+import { Favorites } from "@/types/Favorites";
 
 export default defineComponent({
   name: "ProductPage",
@@ -75,7 +75,11 @@ export default defineComponent({
     cart: {
       type: Object as PropType<Cart>,
       required: true,
-    }
+    },
+    favorites: {
+      type: Object as PropType<Favorites>,
+      required: true
+    },
   },
   data() {
     return {

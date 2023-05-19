@@ -18,4 +18,10 @@ export class Products {
     const productsArray = await this.loadAllProducts();
     return new Map<number, Product>(productsArray.map(product => [product.id, product]));
   }
+
+  public static async loadCategories() : Promise<Array<string>> {
+    const resp = await axios
+      .get<Array<string>>(`https://fakestoreapi.com/products/categories`);
+    return resp.data;
+  }
 }

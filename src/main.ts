@@ -2,10 +2,9 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
-import VueRouter, { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "@/pages/HomePage.vue";
 import ProductPage from "@/pages/ProductPage.vue";
-import { FavoriteLocalStorage } from "@/resources/favorite/FavoriteLocalStorage";
 import { FavoriteRepository } from "@/resources/favorite/FavoriteRepository";
 
 const router = createRouter({
@@ -13,25 +12,24 @@ const router = createRouter({
     {
       path: "/",
       name: "home",
-      component: HomePage,
+      component: HomePage
     },
     {
       path: "/product/:id",
       name: "product",
-      component: ProductPage,
-    },
+      component: ProductPage
+    }
   ],
-  history: createWebHistory(),
+  history: createWebHistory()
 });
 
-declare module 'vue' {
+declare module "vue" {
   interface ComponentCustomProperties {
-    $favoriteRepository: FavoriteRepository
+    $favoriteRepository: FavoriteRepository;
   }
 }
 
 const app = createApp(App);
-app.config.globalProperties.$favoriteRepository = new FavoriteLocalStorage();
-// app.config.globalProperties.$favoriteRepository = new FavoriteLocalStorage();
 app.use(router);
 app.mount("#app");
+

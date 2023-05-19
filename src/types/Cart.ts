@@ -1,24 +1,21 @@
 import { Product } from "@/types/Product";
 import { CartRepository } from "@/resources/cart/CartRepository";
-import { CartLocalStorage } from "@/resources/cart/CartLocalStorage";
-import { Products } from "@/types/Products";
 
 export class Cart {
-  private static repository: CartRepository = new CartLocalStorage();
-
-  public static async loadFromRepository(): Promise<Cart> {
-    const itemMap = await Cart.repository.getProductCounts();
-    const allProducts = await Products.loadMapOfProducts();
-    return new Cart(itemMap, allProducts);
-  }
-
   private readonly items: Map<number, number>;
   private readonly allProducts: Map<number, Product>;
+  private readonly repository: CartRepository;
   private amount: number;
 
-  private constructor(itemMap: Map<number, number>, allProducts: Map<number, Product>) {
+  static async create(repository: CartRepository, allProducts: Map<number, Product>): Promise<Cart> {
+    const items = await repository.getProductCounts();
+    return new Cart(items, allProducts, repository);
+  }
+
+  private constructor(itemMap: Map<number, number>, allProducts: Map<number, Product>, repository: CartRepository) {
     this.items = itemMap;
     this.allProducts = allProducts;
+    this.repository = repository;
     this.amount = 0;
     for (const [product, count] of this.getAllProducts()) {
       this.amount = Math.round((this.amount + product.price * count) * 100) / 100;
@@ -46,7 +43,7 @@ export class Cart {
       this.items.set(product.id, count);
     }
 
-    await Cart.repository.setProductCount(product, count);
+    await this.repository.setProductCount(product, count);
   }
 
   async incrementProductCount(product: Product): Promise<void> {

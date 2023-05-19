@@ -20,7 +20,7 @@
         <div class="d-flex justify-content-center">
 
           <add-to-cart-button :cart="cart" :product="product" />
-          <favorite-button :product="product" class="mx-1" />
+          <favorite-button :product="product" :favorites="favorites" class="mx-1" />
         </div>
       </div>
     </div>
@@ -34,6 +34,7 @@ import {Product} from "@/types/Product";
 import FavoriteButton from "@/components/FavoriteButton.vue";
 import AddToCartButton from "@/components/AddToCartButton.vue";
 import type { PropType } from 'vue'
+import { Favorites } from "@/types/Favorites";
 
 export default defineComponent({
   name: "product-card",
@@ -48,6 +49,10 @@ export default defineComponent({
     },
     cart: {
       type: Object as PropType<Cart>,
+      required: true,
+    },
+    favorites: {
+      type: Object as PropType<Favorites>,
       required: true,
     },
   },

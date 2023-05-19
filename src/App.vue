@@ -2,7 +2,7 @@
   <loading-container v-if="isLoading" />
   <div v-else>
     <nav-bar :cart-count="cart!.count"></nav-bar>
-    <router-view :cart="cart!" />
+    <router-view :cart="cart!" :favorites="favorites!" />
     <cart-modal :cart="cart!" />
   </div>
 </template>
@@ -13,6 +13,10 @@ import NavBar from "@/components/NavBar.vue";
 import CartModal from "@/components/CartModal.vue";
 import {Cart} from "@/types/Cart";
 import LoadingContainer from "@/components/LoadingContainer.vue";
+import { Products } from "@/types/Products";
+import { CartLocalStorage } from "@/resources/cart/CartLocalStorage";
+import { FavoriteLocalStorage } from "@/resources/favorite/FavoriteLocalStorage";
+import { Favorites } from "@/types/Favorites";
 
 export default defineComponent({
   name: 'App',
@@ -25,13 +29,16 @@ export default defineComponent({
     return {
       isLoading: true,
       cart: null as Cart | null,
+      favorites: null as Favorites | null,
     }
   },
-  created(): void {
-    Cart.loadFromRepository().then((cart) => {
-      this.cart = cart;
-      this.isLoading = false;
-    });
+  async created(): Promise<void> {
+    const allProducts = await Products.loadMapOfProducts();
+    const cartRepo = new CartLocalStorage();
+    const favRepo = new FavoriteLocalStorage();
+    this.cart = await Cart.create(cartRepo, allProducts);
+    this.favorites = await Favorites.create(favRepo, allProducts);
+    this.isLoading = false;
   },
 });
 </script>

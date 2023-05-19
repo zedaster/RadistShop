@@ -1,77 +1,53 @@
 <template>
   <button
     class="btn btn-outline-warning btn-white-hover"
-    @click="($event) => change(active)"
+    @click="change"
   >
-    <div v-if="!isLoaded" class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-    <i v-if="isLoaded && isFavorite" class="fa fa-heart" aria-hidden="true"></i>
-    <i v-if="isLoaded && !isFavorite" class="fa fa-heart-o" aria-hidden="true"></i>
+    <i v-if="isFavorite" class="fa fa-heart" aria-hidden="true"></i>
+    <i v-else class="fa fa-heart-o" aria-hidden="true"></i>
   </button>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import {Product} from "@/types/Product";
-import {Cart} from "@/types/Cart";
-import {FavoriteRepository} from "@/resources/favorite/FavoriteRepository";
+import { Product } from "@/types/Product";
+import { Favorites } from "@/types/Favorites";
 
 export default defineComponent({
   name: "favorite-button",
-  data() {
-    return {
-      isLoaded: false,
-      isFavorite: false,
-    }
-  },
   props: {
     product: {
       type: Object as PropType<Product>,
-      required: true,
+      required: true
     },
-    // active: {
-    //   type: Boolean,
-    //   default: false,
-    // },
+    favorites: {
+      type: Object as PropType<Favorites>,
+      required: true
+    }
   },
 
   computed: {
+    isFavorite(): boolean {
+      return this.favorites.isFavoriteProduct(this.product);
+    }
   },
 
-  created() : void {
-    this.$favoriteRepository.isFavoriteProduct(this.product).then((isFav) => {
-      this.isLoaded = true;
-      this.isFavorite = isFav;
-    });
-  },
 
   methods: {
-    change($event: Event) {
+    change() {
       // this.$emit("change", oldState);
-      this.isLoaded = false;
       if (this.isFavorite) {
-        this.$favoriteRepository.removeFavoriteProduct(this.product).then(async (isSuccess) => {
-          if (isSuccess) this.isFavorite = false;
-          this.isLoaded = true;
-        });
+        this.favorites.removeFavoriteProduct(this.product);
       } else {
-        this.$favoriteRepository.addFavoriteProduct(this.product).then(async (isSuccess) => {
-          if (isSuccess) this.isFavorite = true;
-          this.isLoaded = true;
-        });
+        this.favorites.addFavoriteProduct(this.product);
       }
-    },
-  },
+    }
+  }
 });
 </script>
 
 <style scoped>
 .btn-white-hover:hover {
   color: white;
-}
-.spinner-border {
-  width: 16px;
-  height: 16px;
 }
 </style>
