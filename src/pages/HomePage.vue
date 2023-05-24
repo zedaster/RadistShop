@@ -18,7 +18,7 @@
           <button class="btn btn-outline-dark dropdown-toggle dropdown-filters-button" type="button"
                   data-bs-toggle="dropdown" aria-expanded="false">Фильтры
           </button>
-          <ul class="dropdown-menu dropdown-filters">
+          <ul @click="preventClosing" class="dropdown-menu dropdown-filters">
             <h6 class="dropdown-header">Избранное</h6>
             <li class="dropdown-item">
               <div class="form-check form-switch">
@@ -30,11 +30,10 @@
               <hr class="dropdown-divider" />
             </li>
             <h6 class="dropdown-header">Категории</h6>
-            <li class="dropdown-item" v-for="category in allCategories" :key="category">
+            <li class="dropdown-item" @click="$event => onChangeCategory(category, $event)" v-for="category in allCategories" :key="category">
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" :value="category" id="flexCheckDefault"
-                       @change="$event => onChangeCategory(category, $event)">
-                <label class="form-check-label" for="flexCheckDefault">
+                <input class="form-check-input" type="checkbox" v-model="selectedCategories![category]" id="flexCheckDefault">
+                <label @click.prevent.self class="form-check-label" for="flexCheckDefault">
                   {{ category }}
                 </label>
               </div>
@@ -89,33 +88,43 @@ export default defineComponent({
       sortType: "default",
       favoritesSelected: false,
       allCategories: null as Set<string> | null,
-      visibleCategories: null as Set<string> | null,
+      selectedCategories: null as {[key: string]: boolean} | null,
       allProducts: null as Array<Product> | null,
       sortedProducts: null as Array<Product> | null,
-      visibleProducts: null as Array<Product> | null
+      visibleProducts: null as Array<Product> | null,
     };
   },
   methods: {
+    preventClosing(event: Event) {
+      event.stopPropagation();
+    },
     onChangeCategory(category: string, event: InputEvent) {
-      const currentTarget = event.currentTarget as HTMLInputElement;
-      if (currentTarget.checked) {
-        if (this.areAllCategoriesVisible) {
-          this.visibleCategories = new Set([category]);
-        } else {
-          this.visibleCategories!.add(category);
-        }
-      } else {
-        console.log("delete");
-        this.visibleCategories!.delete(category);
-        console.log("Size " + this.visibleProducts!.length);
-        if (this.visibleCategories!.size == 0) {
-          this.visibleCategories = this.allCategories;
-        }
-      }
+      console.log('on change');
+      event.stopPropagation();
+      // event.preventDefault();
+      // const currentTarget = event.currentTarget as HTMLInputElement;
+      // const newChecked = currentTarget.checked;
+      console.log(`Before: ${this.selectedCategories}`);
+      const newChecked = !this.selectedCategories![category];
+      this.selectedCategories![category] = newChecked;
+      console.log(`After: ${this.selectedCategories}`);
+      // if (newChecked) {
+      //   if (this.areAllCategoriesVisible) {
+      //     this.visibleCategories = new Set([category]);
+      //   } else {
+      //     this.visibleCategories!.add(category);
+      //   }
+      // } else {
+      //   console.log("delete");
+      //   this.visibleCategories!.delete(category);
+      //   console.log("Size " + this.visibleProducts!.length);
+      //   if (this.visibleCategories!.size == 0) {
+      //     this.visibleCategories = this.allCategories;
+      //   }
+      // }
       this.applyFilters();
     },
     applyFilters() {
-      console.log('applying filters');
       // Apply query
       const query = this.searchText?.toLowerCase()?.trim();
       if (query == null || query == "") {
@@ -125,20 +134,17 @@ export default defineComponent({
           .filter((product) => product.title.toLowerCase().includes(query));
       }
 
-      console.log('Favorites selected ' + this.favoritesSelected);
       // Apply favorite filter
       if (this.favoritesSelected) {
         this.visibleProducts = this.visibleProducts!.filter((product) => this.favorites.isFavoriteProduct(product));
       }
 
       // Apply category filter
-      this.visibleProducts = this.visibleProducts!.filter((product) => this.visibleCategories!.has(product.category));
+      this.visibleProducts = this.visibleProducts!.filter((product) => this.selectedCategories![product.category]);
     }
   },
   computed: {
-    areAllCategoriesVisible(): boolean {
-      return Array.from(this.allCategories!).every((category) => this.visibleCategories!.has(category));
-    }
+
   },
   watch: {
     searchText() {
@@ -162,7 +168,6 @@ export default defineComponent({
       this.applyFilters();
     },
     favoritesSelected() {
-      console.log('favoritesSelected watch')
       this.applyFilters();
     }
   },
@@ -174,7 +179,11 @@ export default defineComponent({
         Products
           .loadCategories()
           .then((categories) => {
-            this.allCategories = this.visibleCategories = new Set(categories);
+            this.allCategories = new Set(categories);
+            this.selectedCategories = {};
+            for (const category of this.allCategories) {
+              this.selectedCategories[category] = true;
+            }
             this.isLoading = false;
           });
       });
