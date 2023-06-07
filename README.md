@@ -1,4 +1,8 @@
-# vue-shop
+# Radist Shop
+
+## Demo
+
+Check how it works on https://radist-shop.surge.sh/
 
 ## Project setup
 ```
