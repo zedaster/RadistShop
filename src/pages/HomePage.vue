@@ -99,29 +99,9 @@ export default defineComponent({
       event.stopPropagation();
     },
     onChangeCategory(category: string, event: InputEvent) {
-      console.log('on change');
       event.stopPropagation();
-      // event.preventDefault();
-      // const currentTarget = event.currentTarget as HTMLInputElement;
-      // const newChecked = currentTarget.checked;
-      console.log(`Before: ${this.selectedCategories}`);
       const newChecked = !this.selectedCategories![category];
       this.selectedCategories![category] = newChecked;
-      console.log(`After: ${this.selectedCategories}`);
-      // if (newChecked) {
-      //   if (this.areAllCategoriesVisible) {
-      //     this.visibleCategories = new Set([category]);
-      //   } else {
-      //     this.visibleCategories!.add(category);
-      //   }
-      // } else {
-      //   console.log("delete");
-      //   this.visibleCategories!.delete(category);
-      //   console.log("Size " + this.visibleProducts!.length);
-      //   if (this.visibleCategories!.size == 0) {
-      //     this.visibleCategories = this.allCategories;
-      //   }
-      // }
       this.applyFilters();
     },
     applyFilters() {

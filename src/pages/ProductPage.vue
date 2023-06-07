@@ -4,9 +4,9 @@
     <div class="container px-4 px-lg-5 my-5">
       <div
         class="back-container mb-3"
-        @click="($event) => this.$router.push({ name: 'home' })"
+        @click="($event) => $router.push({ name: 'home' })"
       >
-        <i class="fa fa-arrow-left me-2"></i>
+        <i class="fa fa-arrow-left me-2" />
         <p><b>Go back</b></p>
         <p></p>
       </div>
@@ -69,17 +69,17 @@ export default defineComponent({
   components: {
     LoadingContainer,
     FavoriteButton,
-    AddToCartButton,
+    AddToCartButton
   },
   props: {
     cart: {
       type: Object as PropType<Cart>,
-      required: true,
+      required: true
     },
     favorites: {
       type: Object as PropType<Favorites>,
       required: true
-    },
+    }
   },
   data() {
     return {
@@ -89,23 +89,20 @@ export default defineComponent({
     };
   },
   methods: {
-    toggleFavorite() : void {
-      this.isFavorite = !this.isFavorite;
-    },
-    getStarClasses(num: number) : string {
+    getStarClasses(num: number): string {
       if (this.product == null) {
         throw "The product is null!";
       }
       if (num <= this.product.rating.rate) {
         return "fa fa-star";
-      } else if (num - 0.5 <= this.product.rating.rate) {
-        return "fa fa-star-half-o";
-      } else {
-        return "fa fa-star-o";
       }
-    },
+      if (num - 0.5 <= this.product.rating.rate) {
+        return "fa fa-star-half-o";
+      }
+      return "fa fa-star-o";
+    }
   },
-  created() : void {
+  created(): void {
     const id = parseInt(this.$route.params.id.toString());
     Products
       .loadProduct(id)
@@ -113,7 +110,7 @@ export default defineComponent({
         this.product = product;
         this.isLoading = false;
       });
-  },
+  }
 });
 </script>
 
@@ -123,18 +120,22 @@ export default defineComponent({
 .back-icon {
   font-size: 32px;
 }
+
 .ratings i {
   font-size: 24px;
   color: #fbc634 !important;
 }
+
 .back-container {
   display: flex;
   align-items: center;
   cursor: pointer;
 }
+
 .back-container:hover {
   color: var(--bs-gray);
 }
+
 .back-container > p {
   margin: 0;
 }
